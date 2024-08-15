@@ -23,13 +23,13 @@ async def send_files_from_folder(formatted_date):
             with open(file_path, 'rb') as file:
                 await bot.send_document(chat_id=CHAT_ID, document=file)
                 print(f"Файл отправлен: {datetime.now(pytz.timezone('Asia/Almaty')).strftime('%Y-%m-%d %H:%M:%S')} - {filename}")
-    await bot.send_message(chat_id=CHAT_ID, text="Расписание на день.\n"
+    await bot.send_message(chat_id=CHAT_ID, text=f"Расписание на день {formatted_date}.\n"
                                                  "Подробнее смотреть по ссылке: "
                                                  "https://docs.google.com/spreadsheets/d/1ajRuaL7pAIIoi4XkIbhgQxE2lXll-x05cRA0znzkxeY/edit?gid=2139997612#gid=2139997612")
 
 
 async def schedule_job():
-    hours, minutes = 23, 37
+    hours, minutes = 10, 0
     almaty_tz = pytz.timezone('Asia/Almaty')
     scheduler = await aiojobs.create_scheduler()
 
@@ -48,7 +48,7 @@ async def schedule_job():
         await asyncio.sleep(delay)
         prepare_data(formatted_date)
         await scheduler.spawn(send_files_from_folder(formatted_date))
-        await asyncio.sleep(10)
+        await asyncio.sleep(360)
 
 
 def prepare_data(formatted_date):
@@ -59,4 +59,6 @@ def prepare_data(formatted_date):
 
 if __name__ == '__main__':
     print("bot started")
-    asyncio.run(send_files_from_folder("16.08"))
+    with open('dates.txt') as file:
+        formatted_date = file.readlines()[0].rstrip('\n')
+    asyncio.run(send_files_from_folder(formatted_date))

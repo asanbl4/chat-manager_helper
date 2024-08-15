@@ -3,7 +3,7 @@ from parser import web_scraper
 from txt_builder.txt_builder import create_txts
 
 
-def main():
+def main_func():
     with open("./dates.txt") as file:
         filedates = [line.rstrip('\n') for line in file.readlines()]
 
@@ -17,4 +17,4 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    main_func()

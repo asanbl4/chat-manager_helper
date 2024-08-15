@@ -4,5 +4,5 @@ venv/
 .env
 *.json
 *.csv
-*.txt
+txts/
 .ipynb_checkpoints/

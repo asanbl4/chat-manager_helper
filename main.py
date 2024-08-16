@@ -7,6 +7,9 @@ def main_func():
     with open("./dates.txt") as file:
         filedates = [line.rstrip('\n') for line in file.readlines()]
 
+    if not filedates:
+        filedates.append()
+
     for filedate in filedates:
         # create csv files
         web_scraper.parser(filedate)
@@ -14,6 +17,7 @@ def main_func():
         output_dict = clean_data(filedate)
         # create txt files
         create_txts(output_dict, filedate)
+
 
 
 if __name__ == '__main__':

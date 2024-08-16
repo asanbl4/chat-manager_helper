@@ -23,9 +23,7 @@ async def send_files_from_folder(formatted_date):
             with open(file_path, 'rb') as file:
                 await bot.send_document(chat_id=CHAT_ID, document=file)
                 print(f"Файл отправлен: {datetime.now(pytz.timezone('Asia/Almaty')).strftime('%Y-%m-%d %H:%M:%S')} - {filename}")
-    await bot.send_message(chat_id=CHAT_ID, text=f"Расписание на день {formatted_date}.\n"
-                                                 "Подробнее смотреть по ссылке: "
-                                                 "https://docs.google.com/spreadsheets/d/1ajRuaL7pAIIoi4XkIbhgQxE2lXll-x05cRA0znzkxeY/edit?gid=2139997612#gid=2139997612")
+    await bot.send_message(chat_id=CHAT_ID, text=f"Расписание на день {formatted_date}.")
 
 
 async def schedule_job():
@@ -52,7 +50,7 @@ async def schedule_job():
 
 
 def prepare_data(formatted_date):
-    with open('dates.txt', 'w') as file:
+    with open('dates.txt', 'w', encoding="UTF-8") as file:
         file.write(formatted_date)
     main_func()
 

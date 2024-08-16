@@ -1,6 +1,6 @@
 def create_txts(output_dict: dict, date: str):
     for key, value in output_dict.items():
-        with open(f'txts/output{date}_{key}.txt', 'w') as file:
+        with open(f'txts/output{date}_{key}.txt', 'w', encoding="utf-8-sig") as file:
             file.write("\n")
             for subject, name_0 in value[0].items():
                 formatted_name_0 = " ".join(name_0.split())

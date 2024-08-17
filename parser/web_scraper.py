@@ -20,13 +20,10 @@ spreadsheet = client.open_by_url(spreadsheet_url)
 def parser(filedate):
     sheet = spreadsheet.worksheet(filedate)
 
-    # Чтение всех данных с листа
     data = sheet.get_all_records()
 
-    # Путь к файлу для сохранения CSV
     csv_filename = f"csvs/parser_output_{filedate}.csv"
 
-    # Сохранение данных в CSV файл
     with open(csv_filename, mode='w', newline='', encoding='utf-8') as file:
         writer = csv.DictWriter(file, fieldnames=data[0].keys())
         writer.writeheader()

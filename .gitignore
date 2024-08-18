@@ -7,3 +7,4 @@ venv/
 txts/
 imgs/
 .ipynb_checkpoints/
+*.ipynb

@@ -9,8 +9,8 @@ from main import main_func
 
 load_dotenv()
 
-TOKEN = os.getenv("BOT_TOKEN")
-CHAT_ID = int(os.getenv("CHAT_ID"))
+TOKEN = os.getenv("SENDER_BOT_TOKEN")
+CHAT_ID = int(os.getenv("SENDER_CHAT_ID"))
 
 bot = Bot(token=TOKEN)
 dp = Dispatcher()
@@ -41,27 +41,14 @@ def prepare_data(formatted_date):
     main_func()
 
 
-@dp.message()
-async def log_message(message: Message):
-    if message.chat.id == CHAT_ID:
-        username = message.from_user.username or message.from_user.full_name
-        text = message.text
-        timestamp = datetime.now(pytz.timezone('Asia/Almaty')).strftime('%Y-%m-%d %H:%M:%S')
-
-        with open('messages.txt', 'a', encoding='utf-8') as file:
-            file.write(f"{username}: {text}\n - {timestamp}")
-
-        print(f"Logged message from {username}: {text}")
-
-
 async def main():
     print("bot started")
     with open('dates.txt') as file:
         formatted_date = file.readlines()[0].rstrip('\n')
     prepare_data(formatted_date)
     await send_files_from_folder(formatted_date)
-
-    await dp.start_polling(bot)
+    # await dp.start_polling(bot)
+    await bot.session.close()
 
 
 if __name__ == '__main__':

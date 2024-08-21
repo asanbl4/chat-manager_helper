@@ -45,7 +45,8 @@ async def log_message(message: Message):
         # validation for на смене 12-14, резерв 12-14, в резерве 12-14
         if match:
             # validation for 11:54-11:59, 13:54-13:59
-            if int(minutes) >= 54 and hours in [i for i in range(11, 23) if i % 2]:
+            if int(minutes) >= 54 and int(hours) in [i for i in range(11, 23) if i % 2]:
+                print(text, username)
                 # check if there are already logged messages
                 if not result:
                     # check in output txt files for the shift and make true

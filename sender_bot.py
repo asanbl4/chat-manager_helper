@@ -10,13 +10,13 @@ from main import main_func
 load_dotenv()
 
 TOKEN = os.getenv("SENDER_BOT_TOKEN")
-CHAT_ID = int(os.getenv("SENDER_CHAT_ID"))
+
 
 bot = Bot(token=TOKEN)
 dp = Dispatcher()
 
 
-async def send_files_from_folder(formatted_date):
+async def send_files_from_folder(formatted_date, CHAT_ID):
     folder_path = 'imgs'
     media = []
     filenames = os.listdir(folder_path)
@@ -41,15 +41,16 @@ def prepare_data(formatted_date):
     main_func()
 
 
-async def main():
+async def main(CHAT_ID):
     print("bot started")
     with open('dates.txt') as file:
         formatted_date = file.readlines()[0].rstrip('\n')
     prepare_data(formatted_date)
-    await send_files_from_folder(formatted_date)
+    await send_files_from_folder(formatted_date, CHAT_ID)
     # await dp.start_polling(bot)
     await bot.session.close()
 
 
 if __name__ == '__main__':
-    asyncio.run(main())
+    CHAT_ID = int(os.getenv("SENDER_CHAT_ID"))
+    asyncio.run(main(CHAT_ID))

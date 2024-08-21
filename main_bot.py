@@ -21,6 +21,7 @@ dp = Dispatcher()
 async def start(message: Message):
     await message.answer("""/collect_data - собирает информацию
 /send_data - высылает самое новое расписание в чат
+/date {дата} - выставляет сегодняшнюю дату. {дата} в формате 17.08
     """)
 
 
@@ -32,8 +33,15 @@ async def run_main(message: Message):
 
 @dp.message(Command('send_data'))
 async def send_data(message: Message):
-    asyncio.run(sender_bot.main())
+    await sender_bot.main(CHAT_ID=message.chat.id)
     await message.answer('sender bot started')
+
+
+@dp.message(Command('date'))
+async def set_date(message: Message):
+    with open('dates.txt', 'w', encoding="UTF-8") as file:
+        file.write(message.text.split()[1])
+    await message.answer(f"Поставлена дата {message.text.split()[1]}")
 
 
 async def main():

@@ -15,6 +15,3 @@ COPY . .
 
 # Set environment variables (if needed)
 ENV PYTHONUNBUFFERED=1
-
-# Run the bot
-CMD ["sh", "-c", "python main.py && python bot.py"]

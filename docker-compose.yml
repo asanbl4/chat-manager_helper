@@ -1,15 +1,30 @@
 version: '3.8'
 
 services:
-  bot:
+  main_bot:
     build: .
-    container_name: telegram-bot
+    container_name: main_bot
     environment:
-      - BOT_TOKEN=${BOT_TOKEN}
-      - CHAT_ID=${CHAT_ID}
       - CRED_FILENAME=${CRED_FILENAME}
       - FILE_URL=${FILE_URL}
+      - SENDER_BOT_TOKEN=${SENDER_BOT_TOKEN}
+      - MAIN_BOT_TOKEN=${MAIN_BOT_TOKEN}
+      - SENDER_CHAT_ID=${SENDER_CHAT_ID}
     volumes:
       - .:/usr/src/app
       - ./txts:/usr/src/app/txts
+    command: python main_bot.py
+    restart: unless-stopped
+
+  reader_bot:
+    build: .
+    container_name: reader_bot
+    environment:
+      - READER_BOT_TOKEN=${READER_BOT_TOKEN}
+      - READER_CHAT_ID=${READER_CHAT_ID}
+      - RES_CHAT_ID=${RES_CHAT_ID}
+    volumes:
+      - .:/usr/src/app
+      - ./txts:/usr/src/app/txts
+    command: python reader_bot.py
     restart: unless-stopped

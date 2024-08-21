@@ -5,6 +5,7 @@ from datetime import datetime
 
 import pytz
 from aiogram import Bot, Dispatcher
+from aiogram.filters import Command
 from aiogram.types import Message
 from dotenv import load_dotenv
 
@@ -22,6 +23,12 @@ dp = Dispatcher()
 result = []
 
 
+@dp.message(Command('clean'))
+async def clean_logs(message: Message):
+    open('messages.txt', 'w').close()
+    await message.answer('logs cleaned!')
+
+
 @dp.message()
 async def log_message(message: Message):
     global result
@@ -29,10 +36,10 @@ async def log_message(message: Message):
         username = message.from_user.username or message.from_user.full_name
         text = message.text
         timestamp = datetime.now(pytz.timezone('Asia/Almaty')).strftime('%H:%M')
-        # today = datetime.now(pytz.timezone('Asia/Almaty')).strftime('%d.%m')
-        today = '17.08'
-        # hours, minutes = timestamp.split(":")
-        hours, minutes = 11, 55
+        today = datetime.now(pytz.timezone('Asia/Almaty')).strftime('%d.%m')
+        # today = '17.08'
+        hours, minutes = timestamp.split(":")
+        # hours, minutes = 11, 55
         pattern = re.compile(r'(на смене|резерв(е)?)\s*\d{2}-\d{2}', re.IGNORECASE)
         match = pattern.search(text.lower())
         # validation for на смене 12-14, резерв 12-14, в резерве 12-14

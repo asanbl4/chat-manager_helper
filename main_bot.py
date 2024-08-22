@@ -22,9 +22,13 @@ dp = Dispatcher()
 @dp.message(Command('start'))
 async def start(message: Message):
     await message.answer("""/date дата - выставляет сегодняшнюю дату для collect_data. дата в формате 17.08. выставления сегодняшней даты
+    
 /collect_data - собирает информацию по ТГ ОК/СП + собирает изображения расписаний
+
 /send_schedule - высылает самое новое расписание в ЛС
+
 /send_shift - высылает список тех, кто не вышел на смену/резерв
+
 /clean - чистит все записанные в программу сообщения. ПОСЛЕ ВСЕХ ОТМЕТОК ОЧИЩАТЬ.
     """)
 
@@ -32,6 +36,7 @@ async def start(message: Message):
 @dp.message(Command('clean'))
 async def clean_logs(message: Message):
     reader_bot.result = []
+    open('to_send.txt', 'w').close()
     open('messages.txt', 'w').close()
     await message.answer('logs cleaned!')
 
@@ -63,7 +68,10 @@ async def set_date(message: Message):
 @dp.message(Command('send_shift'))
 async def send_shift(message: Message):
     with open('to_send.txt', 'r') as file:
-        await bot.send_message(chat_id=message.chat.id, text=file.read())
+        if file.read():
+            await bot.send_message(chat_id=message.chat.id, text=file.read())
+        else:
+            await bot.send_message(chat_id=message.chat.id, text='Logs have been cleared recently')
 
 
 async def main():

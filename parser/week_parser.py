@@ -10,7 +10,7 @@ load_dotenv()
 
 # Oauth2 settings
 scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
-creds = ServiceAccountCredentials.from_json_keyfile_name("parser/" + os.getenv('CRED_FILENAME'), scope)
+creds = ServiceAccountCredentials.from_json_keyfile_name(os.getenv('CRED_FILENAME'), scope)
 client = gspread.authorize(creds)
 
 spreadsheet_url = os.getenv("FILE_URL")

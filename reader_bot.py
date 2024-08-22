@@ -23,12 +23,6 @@ dp = Dispatcher()
 result = []
 
 
-@dp.message(Command('clean'))
-async def clean_logs(message: Message):
-    open('messages.txt', 'w').close()
-    await message.answer('logs cleaned!')
-
-
 @dp.message()
 async def log_message(message: Message):
     global result
@@ -37,56 +31,45 @@ async def log_message(message: Message):
         text = message.text
         timestamp = datetime.now(pytz.timezone('Asia/Almaty')).strftime('%H:%M')
         today = datetime.now(pytz.timezone('Asia/Almaty')).strftime('%d.%m')
-        # today = '17.08'
+        # today = '21.08'
         hours, minutes = timestamp.split(":")
-        # hours, minutes = 11, 55
+        hours, minutes = ['11', '50']
         pattern = re.compile(r'(на смене|резерв(е)?)\s*\d{2}-\d{2}', re.IGNORECASE)
         match = pattern.search(text.lower())
         # validation for на смене 12-14, резерв 12-14, в резерве 12-14
         if match:
-            # validation for 11:54-11:59, 13:54-13:59
-            if int(minutes) >= 54 and int(hours) in [i for i in range(11, 23) if i % 2]:
-                print(text, username)
+            # validation for 11:48-11:57, 13:48-13:57
+            if 48 <= int(minutes) <= 57 and int(hours) in [i for i in range(11, 23) if i % 2]:
                 # check if there are already logged messages
                 if not result:
-                    # check in output txt files for the shift and make true
                     data_list = await read_output_txt(f'txts/output{today}_{str(int(hours) + 1)}:00.txt')
                 else:
                     data_list = result
                 telegrams = manage_tg_csv.clean_data()
-                res_list = []
-                for data in data_list:
-                    for key, val in telegrams.items():
-                        full_name, subject = val
-                        tg = key
-                        subj, osnova, rezerv = data
-                        if username in tg:
-                            if full_name == osnova:
-                                res_list.append((subj, '', rezerv))
-                            elif full_name == rezerv:
-                                res_list.append((subj, osnova, ''))
-                            else:
-                                res_list.append(data)
-                result = res_list
-                text_for_send = ["НЕ ВЫШЛИ 😡"]
-                for res in res_list:
-                    subj, osnova, rezerv = res
-                    if osnova or rezerv:
-                        text_for_send.append(f"{subj.upper()}:\n{osnova} - основа\n{rezerv} - резерв")
 
                 with open('messages.txt', 'a', encoding='utf-8') as file:
-                    file.write(f"{username}: {text} - {timestamp}\n")
+                    file.write(f"{username} : {text} - {timestamp}\n")
+                    print(f"Logged message from {username}: {text}")
 
                 with open('messages.txt', 'r', encoding='utf-8') as file:
-                    number_of_messages = len(file.readlines())
+                    lines = [line.rstrip('\n') for line in file.readlines()]
+                    for line in lines:
+                        logged_username = line.split()[0]
+                        for tg, (name, subject) in telegrams.items():
+                            if logged_username.lower() in tg.lower():
+                                for data in data_list:
+                                    osnova = data[1].split()
+                                    rezerv = data[2].split()
+                                    if name.split() == osnova:
+                                        data[1] = ''
+                                    elif name.split() == rezerv:
+                                        data[2] = ''
 
-                if 15 <= number_of_messages <= 20:
-                    await bot.send_message(RES_CHAT_ID, text='\n\n'.join(text_for_send))
-                elif number_of_messages > 20:
-                    # if too much results logged, truncate file
-                    open('messages.txt', 'w').close()
-
-                print(f"Logged message from {username}: {text}")
+                    result = data_list
+                with open('to_send.txt', 'w') as file:
+                    file.write('НЕ ВЫШЛИ😡\n\n')
+                    for res in result:
+                        file.write(f"{res[0]} | {f'**{res[1]}**' if res[1] else 'Y'} | {f'**{res[2]}**' if res[2] else 'Y'}\n\n")
 
 
 async def read_output_txt(file_path):
@@ -110,7 +93,7 @@ async def read_output_txt(file_path):
             osnova = match.group(2).strip()
             rezerv = match.group(3).strip()
             if '-' not in subject:
-                data_list.append((subject, osnova, rezerv))
+                data_list.append([subject, osnova, rezerv])
 
     return data_list
 

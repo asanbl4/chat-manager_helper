@@ -9,3 +9,4 @@ imgs/
 .ipynb_checkpoints/
 *.ipynb
 messages.txt
+to_send.txt

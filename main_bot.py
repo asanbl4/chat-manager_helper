@@ -1,5 +1,6 @@
 import asyncio
 import os
+import re
 
 from aiogram import Bot, Dispatcher
 from aiogram.filters import Command
@@ -19,10 +20,18 @@ dp = Dispatcher()
 
 @dp.message(Command('start'))
 async def start(message: Message):
-    await message.answer("""/collect_data - собирает информацию
-/send_data - высылает самое новое расписание в чат
-/date {дата} - выставляет сегодняшнюю дату. {дата} в формате 17.08
+    await message.answer("""/date дата - выставляет сегодняшнюю дату для collect_data. дата в формате 17.08. выставления сегодняшней даты
+/collect_data - собирает информацию по ТГ ОК/СП + собирает изображения расписаний
+/send_schedule - высылает самое новое расписание в ЛС
+/send_shift - высылает список тех, кто не вышел на смену/резерв
+/clean - чистит все записанные в программу сообщения. ПОСЛЕ ВСЕХ ОТМЕТОК ОЧИЩАТЬ.
     """)
+
+
+@dp.message(Command('clean'))
+async def clean_logs(message: Message):
+    open('messages.txt', 'w').close()
+    await message.answer('logs cleaned!')
 
 
 @dp.message(Command('collect_data'))
@@ -31,17 +40,28 @@ async def run_main(message: Message):
     await message.answer('Данные собраны и готовы на отправку!')
 
 
-@dp.message(Command('send_data'))
-async def send_data(message: Message):
+@dp.message(Command('send_schedule'))
+async def send_schedule(message: Message):
     await sender_bot.main(CHAT_ID=message.chat.id)
-    await message.answer('sender bot started')
+    await message.answer('sender bot started, check @chat_manager_helper_bot')
 
 
 @dp.message(Command('date'))
 async def set_date(message: Message):
-    with open('dates.txt', 'w', encoding="UTF-8") as file:
-        file.write(message.text.split()[1])
-    await message.answer(f"Поставлена дата {message.text.split()[1]}")
+    pattern = re.compile(r'\d{2}.\d{2}')
+    match = pattern.match(message.text.split()[1])
+    if match:
+        with open('dates.txt', 'w', encoding="UTF-8") as file:
+            file.write(message.text.split()[1])
+        await message.answer(f"Поставлена дата {message.text.split()[1]}")
+    else:
+        await message.answer(f"Формат даты некорректный!")
+
+
+@dp.message(Command('send_shift'))
+async def send_shift(message: Message):
+    with open('to_send.txt', 'r') as file:
+        await bot.send_message(chat_id=message.chat.id, text=file.read())
 
 
 async def main():

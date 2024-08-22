@@ -5,7 +5,6 @@ from datetime import datetime
 
 import pytz
 from aiogram import Bot, Dispatcher
-from aiogram.filters import Command
 from aiogram.types import Message
 from dotenv import load_dotenv
 
@@ -33,7 +32,7 @@ async def log_message(message: Message):
         today = datetime.now(pytz.timezone('Asia/Almaty')).strftime('%d.%m')
         # today = '21.08'
         hours, minutes = timestamp.split(":")
-        hours, minutes = ['11', '50']
+        # hours, minutes = ['11', '50']
         pattern = re.compile(r'(на смене|резерв(е)?)\s*\d{2}-\d{2}', re.IGNORECASE)
         match = pattern.search(text.lower())
         # validation for на смене 12-14, резерв 12-14, в резерве 12-14

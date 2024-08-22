@@ -7,6 +7,7 @@ from aiogram.filters import Command
 from aiogram.types import Message
 from dotenv import load_dotenv
 
+import reader_bot
 import sender_bot
 from main import main_func
 
@@ -30,6 +31,7 @@ async def start(message: Message):
 
 @dp.message(Command('clean'))
 async def clean_logs(message: Message):
+    reader_bot.result = []
     open('messages.txt', 'w').close()
     await message.answer('logs cleaned!')
 

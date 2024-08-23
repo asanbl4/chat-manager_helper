@@ -17,6 +17,7 @@ TOKEN = os.getenv('MAIN_BOT_TOKEN')
 
 bot = Bot(token=TOKEN)
 dp = Dispatcher()
+SENDER_CHAT_ID = int(os.getenv("SENDER_CHAT_ID"))
 
 
 @dp.message(Command('start'))
@@ -26,6 +27,8 @@ async def start(message: Message):
 /collect_data - собирает информацию по ТГ ОК/СП + собирает изображения расписаний
 
 /send_schedule - высылает самое новое расписание в ЛС
+
+/send_schedule_group - высылает расписание в группу Расписание ОК/СП
 
 /send_shift - высылает список тех, кто не вышел на смену/резерв
 
@@ -53,6 +56,12 @@ async def send_schedule(message: Message):
     await message.answer('sender bot started, check @chat_manager_helper_bot')
 
 
+@dp.message(Command('send_schedule_group'))
+async def send_schedule_group(message: Message):
+    del message
+    await sender_bot.main(SENDER_CHAT_ID)
+
+
 @dp.message(Command('date'))
 async def set_date(message: Message):
     pattern = re.compile(r'\d{2}.\d{2}')
@@ -68,8 +77,9 @@ async def set_date(message: Message):
 @dp.message(Command('send_shift'))
 async def send_shift(message: Message):
     with open('to_send.txt', 'r') as file:
-        if file.read():
-            await bot.send_message(chat_id=message.chat.id, text=file.read())
+        file_contents = file.read()
+        if file_contents:
+            await bot.send_message(chat_id=message.chat.id, text=file_contents)
         else:
             await bot.send_message(chat_id=message.chat.id, text='Logs have been cleared recently')
 

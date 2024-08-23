@@ -30,7 +30,7 @@ async def log_message(message: Message):
         text = message.text
         timestamp = datetime.now(pytz.timezone('Asia/Almaty')).strftime('%H:%M')
         today = datetime.now(pytz.timezone('Asia/Almaty')).strftime('%d.%m')
-        # today = '21.08'
+        # today = '23.08'
         hours, minutes = timestamp.split(":")
         # hours, minutes = ['11', '50']
         pattern = re.compile(r'(на смене|резерв(е)?)\s*\d{2}-\d{2}', re.IGNORECASE)

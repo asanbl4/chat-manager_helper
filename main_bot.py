@@ -1,7 +1,9 @@
 import asyncio
 import os
 import re
+from datetime import datetime
 
+import pytz
 from aiogram import Bot, Dispatcher
 from aiogram.filters import Command
 from aiogram.types import Message
@@ -22,7 +24,7 @@ SENDER_CHAT_ID = int(os.getenv("SENDER_CHAT_ID"))
 
 @dp.message(Command('start'))
 async def start(message: Message):
-    await message.answer("""/date дата - выставляет сегодняшнюю дату для collect_data. дата в формате 17.08. выставления сегодняшней даты
+    await message.answer("""/date - выставляет сегодняшнюю дату для collect_data
     
 /collect_data - собирает информацию по ТГ ОК/СП + собирает изображения расписаний
 
@@ -64,14 +66,10 @@ async def send_schedule_group(message: Message):
 
 @dp.message(Command('date'))
 async def set_date(message: Message):
-    pattern = re.compile(r'\d{2}.\d{2}')
-    match = pattern.match(message.text.split()[1])
-    if match:
-        with open('dates.txt', 'w', encoding="UTF-8") as file:
-            file.write(message.text.split()[1])
-        await message.answer(f"Поставлена дата {message.text.split()[1]}")
-    else:
-        await message.answer(f"Формат даты некорректный!")
+    with open('dates.txt', 'w', encoding="UTF-8") as file:
+        today = datetime.now(pytz.timezone('Asia/Almaty')).strftime('%d.%m')
+        file.write(today)
+    await message.answer(f"Поставлена дата {today}")
 
 
 @dp.message(Command('send_shift'))

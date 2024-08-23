@@ -38,7 +38,7 @@ async def start(message: Message):
 
 @dp.message(Command('clean'))
 async def clean_logs(message: Message):
-    reader_bot.result = []
+    reader_bot.result.clear()
     open('to_send.txt', 'w').close()
     open('messages.txt', 'w').close()
     await message.answer('logs cleaned!')

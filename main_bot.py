@@ -1,6 +1,5 @@
 import asyncio
 import os
-import re
 from datetime import datetime
 
 import pytz
@@ -27,7 +26,8 @@ commands = [
     BotCommand(command="/send_schedule", description="Высылает самое новое расписание в ЛС"),
     BotCommand(command="/send_schedule_group", description="Высылает расписание в группу Расписание ОК/СП"),
     BotCommand(command="/send_shift", description="Высылает список тех, кто не вышел на смену/резерв"),
-    BotCommand(command="/clean", description="Чистит все записанные в программу сообщения")
+    BotCommand(command='/send_close', description="Высылает список тех, кто не закрыл смену"),
+    BotCommand(command="/clean", description="Чистит все записанные в программу сообщения"),
 ]
 
 
@@ -43,6 +43,8 @@ async def start(message: Message):
 
 /send_shift - высылает список тех, кто не вышел на смену/резерв
 
+/send_close - высылает список тех, кто не закрыл смену
+
 /clean - чистит все записанные в программу сообщения. ПОСЛЕ ВСЕХ ОТМЕТОК ОЧИЩАТЬ.
     """)
 
@@ -50,8 +52,11 @@ async def start(message: Message):
 @dp.message(Command('clean'))
 async def clean_logs(message: Message):
     reader_bot.result.clear()
+    reader_bot.close_result.clear()
     open('to_send.txt', 'w').close()
     open('messages.txt', 'w').close()
+    open('messages_close.txt', 'w').close()
+    open('to_send_close.txt', 'w').close()
     await message.answer('logs cleaned!')
 
 
@@ -83,13 +88,21 @@ async def set_date(message: Message):
 
 @dp.message(Command('send_shift'))
 async def send_shift(message: Message):
-    with open('to_send.txt', 'r') as file:
+    await send_file_from_path('to_send.txt', message)
+
+
+@dp.message(Command('send_close'))
+async def send_close(message: Message):
+    await send_file_from_path('to_send_close.txt', message)
+
+
+async def send_file_from_path(path, message):
+    with open(path, 'r') as file:
         file_contents = file.read()
         if file_contents:
             await bot.send_message(chat_id=message.chat.id, text=file_contents)
         else:
             await bot.send_message(chat_id=message.chat.id, text='Logs have been cleared recently')
-
 
 async def main():
     print('main bot started')

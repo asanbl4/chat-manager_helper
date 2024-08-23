@@ -34,7 +34,10 @@ async def log_message(message: Message):
         hours, minutes = timestamp.split(":")
         # hours, minutes = ['11', '50']
         pattern = re.compile(r'(на смене|резерв(е)?)\s*\d{2}-\d{2}', re.IGNORECASE)
-        match = pattern.search(text.lower())
+        try:
+            match = pattern.search(text.lower())
+        except Exception:
+            match = pattern.search(text)
         # validation for на смене 12-14, резерв 12-14, в резерве 12-14
         if match:
             # validation for 11:48-11:57, 13:48-13:57

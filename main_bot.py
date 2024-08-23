@@ -6,7 +6,7 @@ from datetime import datetime
 import pytz
 from aiogram import Bot, Dispatcher
 from aiogram.filters import Command
-from aiogram.types import Message
+from aiogram.types import Message, BotCommand
 from dotenv import load_dotenv
 
 import reader_bot
@@ -20,6 +20,15 @@ TOKEN = os.getenv('MAIN_BOT_TOKEN')
 bot = Bot(token=TOKEN)
 dp = Dispatcher()
 SENDER_CHAT_ID = int(os.getenv("SENDER_CHAT_ID"))
+
+commands = [
+    BotCommand(command="/date", description="Выставляет сегодняшнюю дату для collect_data"),
+    BotCommand(command="/collect_data", description="Собирает информацию по ТГ ОК/СП + изображения расписаний"),
+    BotCommand(command="/send_schedule", description="Высылает самое новое расписание в ЛС"),
+    BotCommand(command="/send_schedule_group", description="Высылает расписание в группу Расписание ОК/СП"),
+    BotCommand(command="/send_shift", description="Высылает список тех, кто не вышел на смену/резерв"),
+    BotCommand(command="/clean", description="Чистит все записанные в программу сообщения")
+]
 
 
 @dp.message(Command('start'))
@@ -84,6 +93,7 @@ async def send_shift(message: Message):
 
 async def main():
     print('main bot started')
+    await bot.set_my_commands(commands)
     await dp.start_polling(bot)
 
 

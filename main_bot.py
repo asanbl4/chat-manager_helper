@@ -51,7 +51,9 @@ async def start(message: Message):
 
 @dp.message(Command('clean'))
 async def clean_logs(message: Message):
+    print('BEFORE CLEANING\t', reader_bot.result)
     reader_bot.result.clear()
+    print('AFTER CLEANING\t', reader_bot.result)
     reader_bot.close_result.clear()
     open('to_send.txt', 'w').close()
     open('messages.txt', 'w').close()
@@ -88,6 +90,7 @@ async def set_date(message: Message):
 
 @dp.message(Command('send_shift'))
 async def send_shift(message: Message):
+    print("BEFORE SENDING\t", reader_bot.result)
     await send_file_from_path('to_send.txt', message)
 
 

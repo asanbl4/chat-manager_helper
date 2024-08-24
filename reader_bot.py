@@ -23,6 +23,12 @@ result = []
 close_result = []
 
 
+def clean_result():
+    global result, close_result
+    result.clear()
+    close_result.clear()
+
+
 @dp.message()
 async def log_message(message: Message):
     global result, close_result

@@ -51,10 +51,7 @@ async def start(message: Message):
 
 @dp.message(Command('clean'))
 async def clean_logs(message: Message):
-    print('BEFORE CLEANING\t', reader_bot.result)
-    reader_bot.result.clear()
-    print('AFTER CLEANING\t', reader_bot.result)
-    reader_bot.close_result.clear()
+    reader_bot.clean_result()
     open('to_send.txt', 'w').close()
     open('messages.txt', 'w').close()
     open('messages_close.txt', 'w').close()

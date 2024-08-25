@@ -99,7 +99,7 @@ async def send_close(message: Message):
 @dp.message(Command('get_result'))
 async def get_result(message: Message):
     s = ' '.join(reader_bot.result)
-    await message.answer(s)
+    await message.answer(s if s else 'No result')
 
 
 async def send_file_from_path(path, message):
@@ -109,6 +109,7 @@ async def send_file_from_path(path, message):
             await bot.send_message(chat_id=message.chat.id, text=file_contents)
         else:
             await bot.send_message(chat_id=message.chat.id, text='Logs have been cleared recently')
+
 
 async def main():
     print('main bot started')

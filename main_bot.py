@@ -96,6 +96,12 @@ async def send_close(message: Message):
     await send_file_from_path('to_send_close.txt', message)
 
 
+@dp.message(Command('get_result'))
+async def get_result(message: Message):
+    s = ' '.join(reader_bot.result)
+    await message.answer(s)
+
+
 async def send_file_from_path(path, message):
     with open(path, 'r') as file:
         file_contents = file.read()

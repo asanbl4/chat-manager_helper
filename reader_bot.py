@@ -24,7 +24,6 @@ close_result = []
 
 
 def clean_result():
-    global result, close_result
     result.clear()
     close_result.clear()
 

@@ -19,18 +19,14 @@ RES_CHAT_ID = int(os.getenv('RES_CHAT_ID'))
 bot = Bot(token=TOKEN)
 dp = Dispatcher()
 
-result = []
-close_result = []
-
 
 def clean_result():
-    result.clear()
-    close_result.clear()
+    with open('txts/result.txt', 'w') as f:
+        f.close()
 
 
 @dp.message()
 async def log_message(message: Message):
-    global result, close_result
     if message.chat.id == CHAT_ID:
         username = message.from_user.username or message.from_user.full_name
         text = message.text
@@ -46,85 +42,43 @@ async def log_message(message: Message):
 
         telegrams = manage_tg_csv.clean_data()
 
+        text = text.replace('\n', ' ').lower()
+        subject = text[text.find('#'):]
+
         # validation for на смене 12-14, резерв 12-14, в резерве 12-14
         if match_start:
             # validation for 11:48-11:57, 13:48-13:57
             if 48 <= int(minutes) <= 57 and int(hours) in [i for i in range(11, 23) if i % 2]:
                 # check if there are already logged messages
-                if not result:
+                data_list = []
+                with open('txts/result.txt', encoding='utf-8') as file:
+                    for line in file.readlines():
+                        line = line.strip('\n').split()
+                        data_list.append((line[0], line[1], line[2]))
+
+                if not data_list:
                     data_list = await read_output_txt(f'txts/output{today}_{str(int(hours) + 1)}:00.txt')
-                else:
-                    data_list = result
 
-                with open('messages.txt', 'a', encoding='utf-8') as file:
-                    file.write(f"{username} : {text} - {timestamp}\n")
-                    print(f"Logged message from {username}: {text}")
+                for data in data_list:
+                    subj = data[0].replace(' ', '').lower()
+                    if subj in subject:
+                        if 'смен' in text:
+                            data[1] = ''
+                        elif 'резерв' in text:
+                            data[2] = ''
 
-                with open('messages.txt', 'r', encoding='utf-8') as file:
-                    lines = [line.rstrip('\n') for line in file.readlines()]
-                    for line in lines:
-                        logged_username = line.split()[0]
-                        for tg, (name, subject) in telegrams.items():
-                            if logged_username.lower() in tg.lower():
-                                for data in data_list:
-                                    osnova = data[1].split()
-                                    rezerv = data[2].split()
-                                    if name.split() == osnova:
-                                        data[1] = ''
-                                    elif name.split() == rezerv:
-                                        data[2] = ''
+                with open('txts/result.txt', 'w', encoding='utf-8') as file:
+                    for data in data_list:
+                        file.write(f'{data[0]} {data[1]} {data[2]}')
 
-                    result = data_list
                 with open('to_send.txt', 'w') as file:
                     file.write('415 база ответьте😡🤬\n\n')
-                    for res in result:
-                        file.write(f"{res[0]} | {f'**{res[1]}**' if res[1] else 'Y'} | {f'**{res[2]}**' if res[2] else 'Y'}\n\n")
+                    for data in data_list:
+                        file.write(f"{data[0]} | {f'**{data[1]}**' if data[1] else 'Y'} | {f'**{data[2]}**' if data[2] else 'Y'}\n\n")
+
         if match_stop:
             # validation for 14:00-14:10
-            if 0 <= int(minutes) <= 10 and int(hours) in [i for i in range(14, 23) if not i % 2]:
-                if int(hours) != 22:
-                    data_list_before = await read_output_txt(f'txts/output{today}_{str(int(hours) - 2)}:00.txt')
-                    data_list_now = await read_output_txt(f'txts/output{today}_{str(int(hours))}:00.txt')
-                    osnova_before = [data[1] for data in data_list_before]
-                    osnova_now = [data[1] for data in data_list_now]
-                    # validation if a person continues their shift
-                    if not close_result:
-                        for i in range(len(osnova_before)):
-                            if osnova_now[i] == osnova_before[i]:
-                                close_result.append('')
-                            else:
-                                close_result.append(' '.join(osnova_before[i].split()))
-                else:
-                    data_list_before = await read_output_txt(f'txts/output{today}_{str(int(hours) - 2)}:00.txt')
-                    osnova_before = [data[1] for data in data_list_before]
-                    if not close_result:
-                        close_result = osnova_before
-
-                with open('messages_close.txt', 'a', encoding='utf-8') as file:
-                    file.write(f"{username} : {text} - {timestamp}\n")
-                    print(f"Logged closing message from {username}")
-
-                osnova = ''
-                subjects = [data[0] for data in data_list_before]
-
-                with open('messages_close.txt', 'r', encoding='utf-8') as file:
-                    lines = [line.rstrip('\n') for line in file.readlines()]
-                    for line in lines:
-                        logged_username = line.split()[0]
-                        for tg, (name, subject) in telegrams.items():
-                            if logged_username.lower() in tg.lower():
-                                osnova = name.split()
-                                break
-
-                for i in range(len(osnova_before)):
-                    el_before = osnova_before[i].split()
-                    if osnova == el_before:
-                        close_result[close_result.index(' '.join(el_before))] = ''
-
-                with open('to_send_close.txt', 'w', encoding='utf-8') as file:
-                    file.write(f"КТО ЗАБЫЛ ЗАКРЫТЬ?!?!?!?!\n\n")
-                    for i, res in enumerate(close_result):
-                        file.write(f"{subjects[i]} | {f'**{res}**' if res else 'Y'}\n\n")
+            pass
 
 
 async def read_output_txt(file_path):

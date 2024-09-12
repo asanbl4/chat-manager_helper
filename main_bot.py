@@ -26,7 +26,7 @@ commands = [
     BotCommand(command="/send_schedule", description="Высылает самое новое расписание в ЛС"),
     BotCommand(command="/send_schedule_group", description="Высылает расписание в группу Расписание ОК/СП"),
     BotCommand(command="/send_shift", description="Высылает список тех, кто не вышел на смену/резерв"),
-    BotCommand(command='/send_close', description="Высылает список тех, кто не закрыл смену"),
+    # BotCommand(command='/send_close', description="Высылает список тех, кто не закрыл смену"),
     BotCommand(command="/clean", description="Чистит все записанные в программу сообщения"),
 ]
 
@@ -87,19 +87,17 @@ async def set_date(message: Message):
 
 @dp.message(Command('send_shift'))
 async def send_shift(message: Message):
-    print("BEFORE SENDING\t", reader_bot.result)
     await send_file_from_path('to_send.txt', message)
 
 
-@dp.message(Command('send_close'))
-async def send_close(message: Message):
-    await send_file_from_path('to_send_close.txt', message)
+# @dp.message(Command('send_close'))
+# async def send_close(message: Message):
+#     await send_file_from_path('to_send_close.txt', message)
 
 
-@dp.message(Command('get_result'))
-async def get_result(message: Message):
-    s = ' '.join(reader_bot.result)
-    await message.answer(s if s else 'No result')
+# @dp.message(Command('get_result'))
+# async def get_result(message: Message):
+#     await message.answer(s if s else 'No result')
 
 
 async def send_file_from_path(path, message):

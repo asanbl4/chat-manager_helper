@@ -1,4 +1,4 @@
-from csv_manager import manage_week_csv, manage_tg_csv
+from csv_manager import manage_week_csv, manage_tg_csv, manage_manager_csv
 from parser import week_parser, tg_parser, manager_parser
 from txt_builder.txt_builder import create_txts
 
@@ -18,8 +18,10 @@ def main_func():
         week_parser.parser(filedate)
         # manage and clean csv file
         output_dict = manage_week_csv.clean_data(filedate)
+        # managers list
+        managers_list = manage_manager_csv.clean_csv(filedate)
         # create txt files
-        create_txts(output_dict, filedate)
+        create_txts(output_dict, filedate, managers_list)
 
 
 if __name__ == '__main__':

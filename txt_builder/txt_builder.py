@@ -32,13 +32,13 @@ def create_images_from_textfile(file_path, image_path):
     print(f"Image saved: {image_path}")
 
 
-def create_txts(output_dict: dict, date: str):
+def create_txts(output_dict: dict, date: str, managers_list: list):
+    counter = 0
     for key, value in output_dict.items():
         filename = f'output{date}_{key}.txt'
         file_path = os.path.join('txts', filename)
-
         with open(file_path, 'w', encoding="utf-8-sig") as file:
-            file.write(f"{key}-{str(int(key[:2]) + 2) + key[2:]}\n\n")
+            file.write(f"{key}-{str(int(key[:2]) + 2) + key[2:]} {managers_list[counter]}\n\n")
             file.write(f"{'Subject':<20}{'Основа':<25}{'Резерв':<25}\n")
             file.write("=" * 70 + "\n")
             for subject, name_0 in value[0].items():
@@ -47,6 +47,7 @@ def create_txts(output_dict: dict, date: str):
                 formatted_name_1 = " ".join(name_1.split()) if name_1 else ""
                 file.write(f"{subject:<20}{formatted_name_0:<25}{formatted_name_1:<25}\n")
                 file.write("-" * 70 + "\n")
+        counter += 1
 
         imgs_folder = 'imgs'
         os.makedirs(imgs_folder, exist_ok=True)

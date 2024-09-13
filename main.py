@@ -1,12 +1,13 @@
-import parser.tg_parser
 from csv_manager import manage_week_csv, manage_tg_csv
-from parser import week_parser, tg_parser
+from parser import week_parser, tg_parser, manager_parser
 from txt_builder.txt_builder import create_txts
 
 
 def main_func():
     # fetch and collect tg data of workers
     tg_parser.parser()
+    # fetch and collect all shift data of managers
+    manager_parser.parser()
 
     # prepare data for sending messages
     with open("./dates.txt") as file:

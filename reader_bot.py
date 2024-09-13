@@ -34,11 +34,11 @@ async def log_message(message: Message):
         today = datetime.now(pytz.timezone('Asia/Almaty')).strftime('%d.%m')
         # today = '23.08'
         hours, minutes = timestamp.split(":")
-        # hours, minutes = ['20', '00']
+        hours, minutes = ['17', '57']
         pattern_start = re.compile(r'(на смене|резерв(е)?)\s*\d{2}-\d{2}', re.IGNORECASE)
         match_start = pattern_start.search(text)
         pattern_stop = re.compile(r'завершил(а)?', re.IGNORECASE)
-        match_stop = pattern_stop.search(text)
+        # match_stop = pattern_stop.search(text)
 
         telegrams = manage_tg_csv.clean_data()
 
@@ -53,32 +53,33 @@ async def log_message(message: Message):
                 data_list = []
                 with open('txts/result.txt', encoding='utf-8') as file:
                     for line in file.readlines():
-                        line = line.strip('\n').split()
+                        line = line.strip('\n').split('ng')
                         data_list.append((line[0], line[1], line[2]))
 
                 if not data_list:
                     data_list = await read_output_txt(f'txts/output{today}_{str(int(hours) + 1)}:00.txt')
 
                 for data in data_list:
+                    print(data)
                     subj = data[0].replace(' ', '').lower()
                     if subj in subject:
                         if 'смен' in text:
                             data[1] = ''
-                        elif 'резерв' in text:
+                        elif 'резер' in text:
                             data[2] = ''
 
                 with open('txts/result.txt', 'w', encoding='utf-8') as file:
                     for data in data_list:
-                        file.write(f'{data[0]} {data[1]} {data[2]}')
+                        file.write(f'{data[0]}ng{data[1]}ng{data[2]}\n')
 
                 with open('to_send.txt', 'w') as file:
                     file.write('415 база ответьте😡🤬\n\n')
                     for data in data_list:
                         file.write(f"{data[0]} | {f'**{data[1]}**' if data[1] else 'Y'} | {f'**{data[2]}**' if data[2] else 'Y'}\n\n")
 
-        if match_stop:
-            # validation for 14:00-14:10
-            pass
+        # if match_stop:
+        #     # validation for 14:00-14:10
+        #     pass
 
 
 async def read_output_txt(file_path):

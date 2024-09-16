@@ -41,6 +41,7 @@ async def log_message(message: Message):
             subject = text[text.find('#'):]
         else:
             match_start = False
+            subject = ''
         pattern_stop = re.compile(r'завершил(а)?', re.IGNORECASE)
         # match_stop = pattern_stop.search(text)
 

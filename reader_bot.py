@@ -35,7 +35,10 @@ async def log_message(message: Message):
         # today = '23.08'
         hours, minutes = timestamp.split(":")
         pattern_start = re.compile(r'(на смене|резерв(е)?)\s*\d{2}-\d{2}', re.IGNORECASE)
-        match_start = pattern_start.search(text)
+        if text:
+            match_start = pattern_start.search(text)
+        else:
+            match_start = False
         pattern_stop = re.compile(r'завершил(а)?', re.IGNORECASE)
         # match_stop = pattern_stop.search(text)
 
@@ -46,7 +49,6 @@ async def log_message(message: Message):
         # validation for на смене 12-14, резерв 12-14, в резерве 12-14
         if match_start:
             # validation for 11:48-11:57, 13:48-13:57
-            print("hours", int(hours))
             if 48 <= int(minutes) <= 57 and int(hours) in [i for i in range(11, 23) if i % 2]:
                 # check if there are already logged messages
                 data_list = []

@@ -3,12 +3,9 @@ import pandas as pd
 
 def clean_csv(filedate: str):
     df = pd.read_csv('csvs/manager_records.csv')
-    df.dropna(inplace=True)
     df.rename(columns={"Unnamed: 0": "shifts"}, inplace=True)
-    df["shifts"] = df["shifts"].map(lambda x: x.lstrip("Смена\n")[:2])
-    today = filedate
-    df2 = pd.DataFrame()
-    df2['shifts'] = [str(i) for i in range(12, 24, 2)]
+    df["shifts"] = df["shifts"].map(lambda x: x.lstrip("Смена\n")[:2] if type(x) is not float else x)
+    today = f"{filedate}"
     managers = {
         '12': df.loc[df['shifts'] == '12', today].unique()[0],
     }

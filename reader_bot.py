@@ -36,7 +36,9 @@ async def log_message(message: Message):
         hours, minutes = timestamp.split(":")
         pattern_start = re.compile(r'(на смене|резерв(е)?)\s*\d{2}-\d{2}', re.IGNORECASE)
         if text:
+            text = text.replace('\n', ' ').lower()
             match_start = pattern_start.search(text)
+            subject = text[text.find('#'):]
         else:
             match_start = False
         pattern_stop = re.compile(r'завершил(а)?', re.IGNORECASE)
@@ -44,8 +46,6 @@ async def log_message(message: Message):
 
         telegrams = manage_tg_csv.clean_data()
 
-        text = text.replace('\n', ' ').lower()
-        subject = text[text.find('#'):]
         # validation for на смене 12-14, резерв 12-14, в резерве 12-14
         if match_start:
             # validation for 11:48-11:57, 13:48-13:57
@@ -59,7 +59,7 @@ async def log_message(message: Message):
 
                 if not data_list:
                     data_list = await read_output_txt(f'txts/output{today}_{str(int(hours) + 1)}:00.txt')
-
+                data_list = [list(x) for x in data_list]
                 for data in data_list:
                     print(data)
                     subj = data[0].replace(' ', '').lower()

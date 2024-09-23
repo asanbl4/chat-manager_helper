@@ -104,6 +104,10 @@ async def log_message(message: Message):
                     for data in data_list:
                         file.write(f'{data[0]}ng{data[1]}ng{data[2]}\n')
 
+                with open('to_send_close.txt', 'w') as file:
+                    file.write('Кто не закрыл?😡🤬\n\n')
+                    for data in data_list:
+                        file.write(f"{data[0]} | {f'**{data[1]}**' if data[1] else 'Y'} | {f'**{data[2]}**' if data[2] else 'Y'}\n\n")
 
 
 async def read_output_txt(file_path):

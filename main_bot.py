@@ -90,14 +90,9 @@ async def send_shift(message: Message):
     await send_file_from_path('to_send.txt', message)
 
 
-# @dp.message(Command('send_close'))
-# async def send_close(message: Message):
-#     await send_file_from_path('to_send_close.txt', message)
-
-
-# @dp.message(Command('get_result'))
-# async def get_result(message: Message):
-#     await message.answer(s if s else 'No result')
+@dp.message(Command('send_close'))
+async def send_close(message: Message):
+    await send_file_from_path('to_send_close.txt', message)
 
 
 async def send_file_from_path(path, message):

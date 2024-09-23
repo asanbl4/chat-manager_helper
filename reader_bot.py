@@ -35,15 +35,16 @@ async def log_message(message: Message):
         # today = '23.08'
         hours, minutes = timestamp.split(":")
         pattern_start = re.compile(r'(на смене|резерв(е)?)\s*\d{2}-\d{2}', re.IGNORECASE)
+        pattern_stop = re.compile(r'завершил(а)?', re.IGNORECASE)
         if text:
             text = text.replace('\n', ' ').lower()
             match_start = pattern_start.search(text)
+            match_stop = pattern_stop.search(text)
             subject = text[text.find('#'):]
         else:
             match_start = False
+            match_stop = False
             subject = ''
-        pattern_stop = re.compile(r'завершил(а)?', re.IGNORECASE)
-        # match_stop = pattern_stop.search(text)
 
         telegrams = manage_tg_csv.clean_data()
 
@@ -62,7 +63,6 @@ async def log_message(message: Message):
                     data_list = await read_output_txt(f'txts/output{today}_{str(int(hours) + 1)}:00.txt')
                 data_list = [list(x) for x in data_list]
                 for data in data_list:
-                    print(data)
                     subj = data[0].replace(' ', '').lower()
                     if subj in subject:
                         if 'смен' in text:
@@ -79,9 +79,31 @@ async def log_message(message: Message):
                     for data in data_list:
                         file.write(f"{data[0]} | {f'**{data[1]}**' if data[1] else 'Y'} | {f'**{data[2]}**' if data[2] else 'Y'}\n\n")
 
-        # if match_stop:
-        #     # validation for 14:00-14:10
-        #     pass
+        if match_stop:
+            # validation for 14:00 - 14:10
+            if 0 <= int(minutes) >= 10 and int(hours) in [hour for hour in range(14, 24, 2)]:
+                data_list = []
+                with open('txts/result_close.txt', encoding='utf-8') as file:
+                    for line in file.readlines():
+                        line = line.strip('\n').split('ng')
+                        data_list.append((line[0], line[1], line[2]))
+
+                if not data_list:
+                    data_list = await read_output_txt(f'txts/output{today}_{str(int(hours))}:00.txt')
+                data_list = [list(x) for x in data_list]
+                try:
+                    data_list2 = await read_output_txt(f'txts/output{today}_{str(int(hours) + 2)}:00.txt')
+                    for i in range(len(data_list)):
+                        osnova1 = data_list[i][1]
+                        osnova2 = data_list2[i][1]
+                        if osnova1 == osnova2:
+                            data_list[i][1] = 'Y'
+                except FileNotFoundError:
+                    pass
+                with open('txts/result_close.txt', 'w', encoding='UTF-8'):
+                    for data in data_list:
+                        file.write(f'{data[0]}ng{data[1]}ng{data[2]}\n')
+
 
 
 async def read_output_txt(file_path):

@@ -61,8 +61,11 @@ async def clean_logs(message: Message):
 
 @dp.message(Command('collect_data'))
 async def run_main(message: Message):
-    main_func()
-    await message.answer('Данные собраны и готовы на отправку!')
+    resp = main_func()
+    if not resp:
+        await message.answer('Данные собраны и готовы на отправку!')
+    else:
+        await message.answer(f'Ошибка:\n\n {resp}')
 
 
 @dp.message(Command('send_schedule'))
@@ -88,6 +91,7 @@ async def set_date(message: Message):
 @dp.message(Command('send_shift'))
 async def send_shift(message: Message):
     await send_file_from_path('to_send.txt', message)
+    await send_file_from_path()
 
 
 @dp.message(Command('send_close'))

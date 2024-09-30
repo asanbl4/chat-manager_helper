@@ -32,7 +32,9 @@ async def send_files_from_folder(formatted_date, CHAT_ID):
         await bot.send_media_group(chat_id=CHAT_ID, media=media)
         await bot.send_message(chat_id=CHAT_ID, text=f"Расписание на день {formatted_date}.")
     else:
-        print("Нет файлов для отправки.")
+        await bot.send_message(chat_id=CHAT_ID, text=f"""No files to send: write /collect_data to the @umsch_main_helper_bot;
+OR check this google document:
+https://docs.google.com/spreadsheets/d/1ajRuaL7pAIIoi4XkIbhgQxE2lXll-x05cRA0znzkxeY/edit?gid=2139997612#gid=2139997612""")
 
 
 def prepare_data(formatted_date):
@@ -45,7 +47,7 @@ async def main(CHAT_ID):
     print("bot started")
     with open('dates.txt') as file:
         formatted_date = file.readlines()[0].rstrip('\n')
-    prepare_data(formatted_date)
+    # prepare_data(formatted_date)
     await send_files_from_folder(formatted_date, CHAT_ID)
     # await dp.start_polling(bot)
     await bot.session.close()

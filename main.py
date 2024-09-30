@@ -24,7 +24,8 @@ def main_func():
             # create txt files
             create_txts(output_dict, filedate, managers_list)
     except Exception as e:
-        return f"{e}"
+        print(e)
+        return e
 
 
 if __name__ == '__main__':

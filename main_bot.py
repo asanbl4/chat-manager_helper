@@ -65,7 +65,7 @@ async def run_main(message: Message):
     if not resp:
         await message.answer('Данные собраны и готовы на отправку!')
     else:
-        await message.answer(f'Ошибка:\n\n {resp}')
+        await message.answer(f'Ошибка:\n\n{resp}')
 
 
 @dp.message(Command('send_schedule'))

@@ -120,6 +120,7 @@ async def set_date(message: Message):
 @dp.message(Command("send_shift"))
 async def send_shift(message: Message):
     await send_file_from_path("to_send.txt", message)
+    await send_tg_for_shift("to_send.txt", message)
 
 
 @dp.message(Command("send_close"))
@@ -139,6 +140,13 @@ async def send_file_from_path(path, message):
 
 
 async def write_tg_csv_to_txt():
+    clean_tgs = await clean_tg()
+    with open("tg.txt", "w") as file:
+        for full_name, tg_handle in sorted(clean_tgs):
+            file.write(f"{full_name} | {tg_handle}\n")
+
+
+async def clean_tg():
     telegrams = manage_tg_csv.clean_data()
     clean_tgs = []
     for tg_handle, (full_name, subject) in telegrams.items():
@@ -146,9 +154,33 @@ async def write_tg_csv_to_txt():
             tg_handle = "@" + tg_handle
         surname, firstname = full_name.split()
         clean_tgs.append((surname + " " + firstname, tg_handle))
-    with open("tg.txt", "w") as file:
-        for full_name, tg_handle in sorted(clean_tgs):
-            file.write(f"{full_name} | {tg_handle}\n")
+    return clean_tgs
+
+
+async def send_tg_for_shift(filepath, message):
+    clean_tgs = await clean_tg()
+    osnovas = []
+    rezervs = []
+    with open(filepath) as file:
+        lines = file.readlines()
+        for line in lines[1:]:
+            line = line.rstrip('\n')
+            if line:
+                subject, osnova, rezerv = line.split(" | ")
+                osnovas.append(osnova)
+                rezervs.append(rezerv)
+    clean_tgs_dict = dict(clean_tgs)
+    msg_txt = 'Основа\n'
+    for osnova in osnovas:
+        osnova = osnova.strip("**")
+        if not osnova == "Y":
+            msg_txt += f"{osnova} {clean_tgs_dict.get(osnova)}\n"
+    msg_txt += 'Резерв\n'
+    for rezerv in rezervs:
+        rezerv = rezerv.strip("**")
+        if not rezerv == "Y":
+            msg_txt += f"{rezerv} {clean_tgs_dict.get(rezerv)}\n"
+    await bot.send_message(chat_id=message.chat.id, text=msg_txt)
 
 
 async def main():

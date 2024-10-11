@@ -33,6 +33,9 @@ commands = [
         command="/send_schedule", description="Высылает самое новое расписание в ЛС"
     ),
     BotCommand(
+        command="/tg", description="Высылает Имя | ТГ сотрудников"
+    ),
+    BotCommand(
         command="/send_schedule_group",
         description="Высылает расписание в группу Расписание ОК/СП",
     ),

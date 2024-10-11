@@ -137,10 +137,14 @@ async def send_file_from_path(path, message):
 
 async def write_tg_csv_to_txt():
     telegrams = manage_tg_csv.clean_data()
+    clean_tgs = []
+    for tg_handle, (full_name, subject) in telegrams.items():
+        if tg_handle[0] != "@":
+            tg_handle = "@" + tg_handle
+        surname, firstname = full_name.split()
+        clean_tgs.append((surname + " " + firstname, tg_handle))
     with open("tg.txt", "w") as file:
-        for tg_handle, (full_name, subject) in telegrams.items():
-            if tg_handle[0] != "@":
-                tg_handle = "@" + tg_handle
+        for full_name, tg_handle in sorted(clean_tgs):
             file.write(f"{full_name} | {tg_handle}\n")
 
 

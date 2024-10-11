@@ -2,8 +2,8 @@ import pandas as pd
 
 
 def clean_data(filedate: str) -> dict:
-    df = pd.read_csv(f'csvs/parser_output_{filedate}.csv')
-    df.fillna('', inplace=True)
+    df = pd.read_csv(f"csvs/parser_output_{filedate}.csv")
+    df.fillna("", inplace=True)
 
     # Delete rows with НЕ занимать && delete row with days of the week
     df_cleaned = df[df["Служба поддержки"] != "НЕ занимать"].drop(1, axis=0)
@@ -11,7 +11,9 @@ def clean_data(filedate: str) -> dict:
     # rename first column normally
     df_cleaned.rename(columns={"Unnamed: 0": "Время"}, inplace=True)
     # stay only the time of the start
-    df_cleaned["Время"] = df_cleaned["Время"].map(lambda x: x[5:-8] if "Чаты" in x else x)
+    df_cleaned["Время"] = df_cleaned["Время"].map(
+        lambda x: x[5:-8] if "Чаты" in x else x
+    )
     # reset index after deletion of some rows
     df_cleaned.reset_index(drop=True, inplace=True)
 
@@ -21,6 +23,3 @@ def clean_data(filedate: str) -> dict:
         output_dict[row["Время"]] = [row[1:], df_cleaned.iloc[i + 1][1:]]
 
     return output_dict
-
-
-

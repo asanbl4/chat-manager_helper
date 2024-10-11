@@ -9,8 +9,13 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # Oauth2 settings
-scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
-creds = ServiceAccountCredentials.from_json_keyfile_name(os.getenv('CRED_FILENAME'), scope)
+scope = [
+    "https://spreadsheets.google.com/feeds",
+    "https://www.googleapis.com/auth/drive",
+]
+creds = ServiceAccountCredentials.from_json_keyfile_name(
+    os.getenv("CRED_FILENAME"), scope
+)
 client = gspread.authorize(creds)
 
 spreadsheet_url = os.getenv("FILE_URL")
@@ -24,7 +29,7 @@ def parser(filedate):
 
     csv_filename = f"csvs/parser_output_{filedate}.csv"
 
-    with open(csv_filename, mode='w', newline='', encoding='utf-8') as file:
+    with open(csv_filename, mode="w", newline="", encoding="utf-8") as file:
         writer = csv.DictWriter(file, fieldnames=data[0].keys())
         writer.writeheader()
         writer.writerows(data)

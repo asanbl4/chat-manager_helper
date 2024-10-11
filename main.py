@@ -12,7 +12,7 @@ def main_func():
 
         # prepare data for sending messages
         with open("./dates.txt") as file:
-            filedates = [line.rstrip('\n') for line in file.readlines()]
+            filedates = [line.rstrip("\n") for line in file.readlines()]
 
         for filedate in filedates:
             # create csv files for sending bot
@@ -28,5 +28,5 @@ def main_func():
         return e
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main_func()

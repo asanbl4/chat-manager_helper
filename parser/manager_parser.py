@@ -10,7 +10,7 @@ def parser():
 
     csv_filename = f"csvs/manager_records.csv"
 
-    with open(csv_filename, mode='w', newline='', encoding='utf-8') as file:
+    with open(csv_filename, mode="w", newline="", encoding="utf-8") as file:
         writer = csv.DictWriter(file, fieldnames=data[0].keys())
         writer.writeheader()
         writer.writerows(data)

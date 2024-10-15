@@ -170,17 +170,22 @@ async def send_tg_for_shift(filepath, message):
                 osnovas.append(osnova)
                 rezervs.append(rezerv)
     clean_tgs_dict = dict(clean_tgs)
+    msg_to_resend = 'Основа\n'
     msg_txt = 'Основа\n'
     for osnova in osnovas:
         osnova = osnova.strip("**")
         if not osnova == "Y":
             msg_txt += f"{osnova} {clean_tgs_dict.get(osnova)}\n"
+            msg_to_resend += f"{clean_tgs_dict.get(osnova)}\n"
+    msg_to_resend += 'Резерв\n'
     msg_txt += 'Резерв\n'
     for rezerv in rezervs:
         rezerv = rezerv.strip("**")
         if not rezerv == "Y":
             msg_txt += f"{rezerv} {clean_tgs_dict.get(rezerv)}\n"
+            msg_to_resend += f"{clean_tgs_dict.get(rezerv)}\n"
     await bot.send_message(chat_id=message.chat.id, text=msg_txt)
+    await bot.send_message(chat_id=message.chat.id, text=msg_to_resend)
 
 
 async def main():
